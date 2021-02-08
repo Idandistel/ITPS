@@ -7,14 +7,14 @@ from matplotlib.ticker import MaxNLocator
 import numpy as np
 from Honeycomb2 import Honeycomb
 from elasto_plasticity import elasto_plasticity
-
+from hyper_new import hyperelasticity
 #creating the structure
 #parameter defenition
 
-a=60 # face length(middle)
-t=2  #  half web thickness
-b=20 #isolation thickness
-resolution=2
+a=40 # face length(middle)
+t=1  #  half web thickness
+b=10 #isolation thickness
+resolution=1
 
 n_times_x=2 # linear pattern over the base cell in x directon
 n_times_y=2 # linear pattern over the base cell in y directon
@@ -32,14 +32,17 @@ phi[1,1]=55
 phi[1,2]=30
 phi[1,3]=0
 
+elastic=0
+#geometry defenition
 A=Honeycomb(int(a*resolution),int(t*resolution),int(b*resolution),int(fiber_width*resolution),phi,
 int(fiber_clearance*resolution),n_times_x,n_times_y)
 
-#next step-running random geometries using monte carlo algorithem and calculating stress and strain
 [Nx,Ny,Nz]=A.shape
 print('Structure dim-'+str(A.shape))
-
-F=elasto_plasticity(A)
+if elastic ==0:
+    F = hyperelasticity(A)
+if elastic ==1:
+    F=elasto_plasticity(A)
 
 
 #material structure view

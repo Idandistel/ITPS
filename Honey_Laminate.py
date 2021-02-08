@@ -27,46 +27,51 @@ def Honey_Laminate(A,coordinates,fiber_width,fiber_angle,fiber_clearance):
             # print(anchor)
             # print(left_anchor)
             # print(right_anchor)
-            for dy in range(int(np.ceil(h/2+4*t))):
+            for dy in range(int(np.ceil(h/2+t))):
                 dx=int((dy)/ratio)
                 # checking if the next stair reaches the border, if it is ,searching for border and setting it as the final stair
                 right_index= (np.where(A[
                 int(right_anchor[0]-t+dx):int(right_anchor[0]+t+dx),
                 int(right_anchor[1]+dy)].flatten() == 1))
-                #print(np.size(index))
+                #print('right index size'+str(np.size(right_index)))
                 
                 right_index = np.asarray(right_index)
-                array_length = len(right_index[0,:])
+                #print('right index='+str(right_index))
+                
         
+                
+            
+                
+                A[int(left_anchor[0]-t-dx):int(left_anchor[0]+t-dx),int(left_anchor[1]-dy)]=1 #bottom left half
+                A[int(right_anchor[0]-t+dx):int(right_anchor[0]+t+dx),int(right_anchor[1]+dy)]=1 #top right half
+
                 if (np.size(right_index) >0 and 
-                (right_index[0,0] == 1 or right_index[0, array_length -1] == 1  )) :
+                (right_index[0,0] == 0  )) :
 
                     # print(' right break on dy='+str(dy))
                     break
-            
-                
-                A[int(left_anchor[0]-t-dx):int(left_anchor[0]+t-dx),int(left_anchor[1]-dy)]=1
-                A[int(right_anchor[0]-t+dx):int(right_anchor[0]+t+dx),int(right_anchor[1]+dy)]=1
-                
-            if i>0 : #seperates the calculation for 2 couples half fibers
-                for dy in range(1,int(np.ceil(h/2+4*t))):
+            if i>0 : #seperates the calculation for 2 couples half fibers, adding
+                for dy in range(1,int(np.ceil(h/2))):
                     dx=int((dy)/ratio)
+                    # print(h/2-dy)
+                    # print(A.shape)
                     # checking if the next stair reaches the border, if it is ,searching for border and setting it as the final stair
                     left_index= (np.where(A[int(left_anchor[0]-t+dx):int(left_anchor[0]+t+dx),int(left_anchor[1]+dy)].flatten() == 1))
                     #print(np.size(index))
           
                     left_index = np.asarray(left_index)
-                    array_length = len(left_index[0,:])
+                    #array_length = len(left_index[0,:])
                     # print(left_index)
-                    if (np.size(left_index) >0 and 
-                    (left_index[0,0] == 1 or left_index[0, array_length -1] == 1  )) :
-                        # print('left break on dy='+str(dy))
-                        break
+                    
             
-                    A[int(left_anchor[0]-t+dx):int(left_anchor[0]+t+dx),int(left_anchor[1]+dy)]=1
+                    A[int(left_anchor[0]-t+dx):int(left_anchor[0]+t+dx),int(left_anchor[1]+dy)]=1 #top left half
                 
                    
-                    A[int(right_anchor[0]-t-dx):int(right_anchor[0]+t-dx),int(right_anchor[1]-dy)]=1   
+                    A[int(right_anchor[0]-t-dx):int(right_anchor[0]+t-dx),int(right_anchor[1]-dy)]=1  #bottom right half
+                    if (np.size(left_index) >0 and 
+                    (left_index[0,0] == 0  )) :
+                        # print('left break on dy='+str(dy))
+                        break 
     else : 
          if(fiber_angle<90):
              alpha=90+fiber_angle
@@ -85,7 +90,7 @@ def Honey_Laminate(A,coordinates,fiber_width,fiber_angle,fiber_clearance):
             #  print(anchor)
             #  print(bottom_anchor)
             #  print(top_anchor)    
-             for dx in range(int(np.ceil(w/2+2*t))): 
+             for dx in range(int(np.ceil(w/2+t))): 
                  dy=int((dx)/ratio)
                  # checking if the next stair reaches the border, if it is ,searching for border and setting it as the final stair
                  top_index= (np.where(A[
@@ -94,14 +99,15 @@ def Honey_Laminate(A,coordinates,fiber_width,fiber_angle,fiber_clearance):
                  # print(np.size(top_index))
         
                  top_index = np.asarray(top_index)
-                 array_length = len(top_index[0,:])
+                 #array_length = len(top_index[0,:])
         
-                 if (np.size(top_index) >0 and (top_index[0,0] == 1 or top_index[0, array_length -1] == 1  )) :
-                 #   print('top broke at'+str(dx))
-                     break
+                 
 
                  A[int(top_anchor[0]-dx),int(top_anchor[1]-t+dy):int(top_anchor[1]+t+dy)]=1 #top left fiber
                  A[int(bottom_anchor[0]+dx),int(bottom_anchor[1]-t-dy):int(bottom_anchor[1]+t-dy)]=1 # bottom right fiber
+                 if (np.size(top_index) >0 and (top_index[0,0] == 0   )) :
+                     #   print('top broke at'+str(dx))
+                     break
              if j>0 : #adding additional 2 half fibers
                  for dx in range(1,int(np.ceil(w/2+t))):
                      dy=int((dx)/ratio)
@@ -112,11 +118,12 @@ def Honey_Laminate(A,coordinates,fiber_width,fiber_angle,fiber_clearance):
                     #  print('bottom index'+str(np.size(bottom_index)))
                      bottom_index = np.asarray(bottom_index)
                      array_length = len(bottom_index[0,:])
-                     if (np.size(bottom_index) >0 and (bottom_index[0,0] == 1 or bottom_index[0, array_length -1] == 1  )) :
-                        # print('bottom broke at'+str(dx))
-                        break
+                     
                      A[int(top_anchor[0]+dx),int(top_anchor[1]-t-dy):int(top_anchor[1]+t-dy)]=1 #top right fiber
                      A[int(bottom_anchor[0]-dx),int(bottom_anchor[1]-t+dy):int(bottom_anchor[1]+t+dy)]=1 # bottom left fiber
+                     if (np.size(bottom_index) >0 and (bottom_index[0,0] == 0   )) :
+                         # print('bottom broke at'+str(dx))
+                         break
 
             
 
