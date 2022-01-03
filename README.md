@@ -1,5 +1,6 @@
 # ITPS
-
+for the scripts to run one have to install both easyPBC and micromechanics plug ins first 
+files explanation:
 gmsh_final reads data from geom_datafile and makes the meshing 
 mech_analasys is an abaqus scripting file for running a single simulation
 mech_therm analasys runs the script from pythin
